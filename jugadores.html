@@ -16,6 +16,12 @@
       integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
       crossorigin="anonymous"
     ></script>
+    <style>
+      img {
+        width: 150px;
+        height: 150px;
+      }
+    </style>
   </head>
   <body>
     <div class="container mt-4">
@@ -68,11 +74,17 @@
         </div>
       </nav>
       <div class="text-center">
-        <h4 id="nombreEquipo"></h4>
-        <img src="" alt="imgEquipo" id="imgEquipo" />
-        <p id="descripcion"></p>
-        <a id="btnJugadores" class="btn btn-success">Jugadores</a>
-        <a href="/index.html" id="btnVolver" class="btn btn-primary">Volver</a>
+        <button id="btnVolver" class="btn btn-success">Volver</button>
+        <table class="table table-info" id="tablaJugadores">
+          <thead>
+            <tr>
+              <th>NOMBRE</th>
+              <th>IMAGEN</th>
+              <th>DETALLES</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
     </div>
     <script src="./js/jquery-3.7.1.min.js"></script>
@@ -82,7 +94,7 @@
         let requestNav = "api/Equipos";
         let params = new window.URLSearchParams(window.location.search);
         let idEquipo = parseInt(params.get("idequipo"));
-        let requestEquipo = `api/Equipos/${idEquipo}`;
+        let requestJugadores = "api/Jugadores/JugadoresEquipos/" + idEquipo;
 
         $.ajax({
           url: url + requestNav,
@@ -97,18 +109,24 @@
           },
         });
 
+        $("#btnVolver").click(function () {
+          window.history.back();
+        });
+
         $.ajax({
-          url: url + requestEquipo,
+          url: url + requestJugadores,
           method: "GET",
           dataType: "json",
           success: function (data) {
-            $("#nombreEquipo").text(data.nombre);
-            $("#imgEquipo").attr("src", data.imagen);
-            $("#descripcion").text(data.descripcion);
-            $("#btnJugadores").attr(
-              "href",
-              `jugadores.html?idequipo=${idEquipo}`
-            );
+            $.each(data, function (i, j) {
+              $("#tablaJugadores tbody").append(`
+                <tr>
+                  <td>${j.nombre}</td>
+                  <td><img src='${j.imagen}' alt='${j.nombre}'></td>
+                  <td><a href='jugador.html?idjugador=${j.idJugador}' class='btn btn-danger'>Detalles</a></td>
+                </tr>
+              `);
+            });
           },
         });
       });

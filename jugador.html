@@ -16,6 +16,12 @@
       integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
       crossorigin="anonymous"
     ></script>
+    <style>
+      #imgJugador {
+        width: 200px;
+        height: 250px;
+      }
+    </style>
   </head>
   <body>
     <div class="container mt-4">
@@ -68,11 +74,11 @@
         </div>
       </nav>
       <div class="text-center">
-        <h4 id="nombreEquipo"></h4>
-        <img src="" alt="imgEquipo" id="imgEquipo" />
-        <p id="descripcion"></p>
-        <a id="btnJugadores" class="btn btn-success">Jugadores</a>
-        <a href="/index.html" id="btnVolver" class="btn btn-primary">Volver</a>
+        <h1 id="nombreJugador"></h1>
+        <img alt="ImgJugador" id="imgJugador" />
+        <p id="fechaNacimiento"></p>
+        <p id="paisJugador"></p>
+        <button id="btnVolver" class="btn btn-success">Jugadores</button>
       </div>
     </div>
     <script src="./js/jquery-3.7.1.min.js"></script>
@@ -81,8 +87,8 @@
         const url = "https://apiapuestas.azurewebsites.net/";
         let requestNav = "api/Equipos";
         let params = new window.URLSearchParams(window.location.search);
-        let idEquipo = parseInt(params.get("idequipo"));
-        let requestEquipo = `api/Equipos/${idEquipo}`;
+        let idJugador = parseInt(params.get("idjugador"));
+        let requestJugador = "api/Jugadores/" + idJugador;
 
         $.ajax({
           url: url + requestNav,
@@ -98,17 +104,19 @@
         });
 
         $.ajax({
-          url: url + requestEquipo,
+          url: url + requestJugador,
           method: "GET",
           dataType: "json",
           success: function (data) {
-            $("#nombreEquipo").text(data.nombre);
-            $("#imgEquipo").attr("src", data.imagen);
-            $("#descripcion").text(data.descripcion);
-            $("#btnJugadores").attr(
-              "href",
-              `jugadores.html?idequipo=${idEquipo}`
+            $("#btnVolver").click(function () {
+              window.location.href = `jugadores.html?idequipo=${data.idEquipo}`;
+            });
+            $("#nombreJugador").text(data.nombre);
+            $("#imgJugador").attr("src", data.imagen);
+            $("#fechaNacimiento").text(
+              "Fecha nacimiento: " + data.fechaNacimiento
             );
+            $("#paisJugador").text("País: " + data.pais);
           },
         });
       });
